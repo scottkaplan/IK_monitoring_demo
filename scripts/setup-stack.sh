@@ -5,12 +5,14 @@ echo "=== Starting Infrastructure Setup ==="
 
 # 1. Update Core Dependencies and Install Docker + Compose Plugin via DNF
 dnf update -y
-dnf install -y docker docker-compose-plugin
+dnf install -y docker
 systemctl enable --now docker
 usermod -aG docker ec2-user
 
 # 2. Verify Docker Compose registers cleanly (Logs to your execution file)
-docker compose version
+mkdir -p /usr/libexec/docker/cli-plugins
+DEB_HOST="https://docker.com"
+curl -SL "${DEB_HOST}/docker-compose-plugin_2.24.5-1~ubuntu.24.04~noble_amd64.deb" -o /tmp/compose.deb
 
 # 3. Create Clean Working Space Environments
 BASE_DIR="/home/ec2-user/prometheus-demo"
