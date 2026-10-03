@@ -9,7 +9,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-2" # Change to your preferred AWS target region
+  region = "us-west-1" # Change to your preferred AWS target region
 }
 
 # ==========================================
@@ -28,8 +28,8 @@ resource "aws_vpc" "ik_vpc" {
 
 resource "aws_subnet" "ik_subnet" {
   vpc_id            = aws_vpc.ik_vpc.id
-  cidr_block        = "10.0.0.0/24"
-  availability_zone = "us-west-2a"
+  cidr_block        = "10.0.0.0/24" # Fits within the 10.0.0.0/16 VPC block allocation
+  availability_zone = "us-west-1a"
 
   tags = {
     Name = "IK-Public-Subnet"
