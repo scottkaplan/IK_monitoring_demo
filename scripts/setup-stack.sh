@@ -39,6 +39,7 @@ curl -SL "${GITHUB_RAW}/prometheus.yml" -o /home/ec2-user/prometheus-demo/promet
 curl -SL "${GITHUB_RAW}/dashboard.yml" -o /home/ec2-user/prometheus-demo/dashboard.yml
 curl -SL "${GITHUB_RAW}/ik_dashboard.json" -o /home/ec2-user/prometheus-demo/ik_dashboard.json
 curl -SL "${GITHUB_RAW}/docker-compose.yml" -o /home/ec2-user/prometheus-demo/docker-compose.yml
+curl -SL "${GITHUB_RAW}/generate_traffic.py" -o /home/ec2-user/prometheus-demo/generate_traffic.py
 
 # 6. Jump into the workspace and run the stack
 cd /home/ec2-user/prometheus-demo
