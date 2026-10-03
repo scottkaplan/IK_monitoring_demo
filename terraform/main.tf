@@ -170,8 +170,8 @@ data "aws_route53_zone" "primary_domain" {
 resource "aws_route53_record" "dns_cname" {
   zone_id = data.aws_route53_zone.primary_domain.zone_id
   name    = "monitoring-demo.kaplans.com"
-  type    = "CNAME"
-  ttl     = 300
+  type    = "A"
+  ttl     = 30
   records = [aws_eip.monitoring_eip.public_dns]
 }
 
