@@ -29,6 +29,7 @@ services:
     volumes:
       - ./grafana-storage:/var/lib/grafana
       - ./dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml 
       - ./ik_dashboard.json:/var/lib/grafana/dashboards/ik_dashboard.json
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
