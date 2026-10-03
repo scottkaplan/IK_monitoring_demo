@@ -147,7 +147,7 @@ resource "aws_instance" "monitoring_node" {
 
               # 2. Setup the Docker Compose Plugin manually
               mkdir -p /usr/libexec/docker/cli-plugins
-              curl -SL https://github.com$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
+              curl -SL https://github.com/$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
               chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
               # 3. Create Project Structure
