@@ -147,7 +147,7 @@ resource "aws_instance" "monitoring_node" {
 
               # 2. Setup the Docker Compose Plugin manually
               mkdir -p /usr/libexec/docker/cli-plugins
-              curl -SL https://github.com(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
+              curl -SL https://github.com$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
               chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
               # 3. Create Project Structure
@@ -267,7 +267,7 @@ data "aws_route53_zone" "primary_domain" {
 
 resource "aws_route53_record" "dns_cname" {
   zone_id = data.aws_route53_zone.primary_domain.zone_id
-  name    = "monitoring_://kaplans.com"
+  name    = "monitoring-demo.kaplans.com"
   type    = "CNAME"
   ttl     = 300
   records = [aws_eip.monitoring_eip.public_dns]
@@ -283,6 +283,6 @@ output "instance_public_ip" {
 }
 
 output "dns_endpoint" {
-  value       = "http://monitoring_://kaplans.com:3000"
+  value       = "http://monitoring-demo.kaplans.com:3000"
   description = "The target live web address URL endpoint layer routing directly to your Grafana screen dashboards."
 }
