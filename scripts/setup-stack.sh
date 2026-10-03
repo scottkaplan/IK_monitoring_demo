@@ -21,7 +21,7 @@ mkdir -p $BASE_DIR/grafana-storage
 chown -R 472:472 $BASE_DIR/grafana-storage
 
 # 4. Fetch App and Infrastructure Asset Code Modules from GitHub
-GITHUB_RAW="https://githubusercontent.com"
+GITHUB_RAW="https://raw.githubusercontent.com/main/scripts"
 
 curl -SL "${GITHUB_RAW}/main.py" -o $BASE_DIR/app/main.py
 curl -SL "${GITHUB_RAW}/requirements.txt" -o $BASE_DIR/app/requirements.txt

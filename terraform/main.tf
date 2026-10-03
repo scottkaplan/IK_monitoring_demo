@@ -136,110 +136,12 @@ resource "aws_instance" "monitoring_node" {
   vpc_security_group_ids = [aws_security_group.monitoring_sg.id]
   key_name               = "IK"
 
-  # Automate installation and service injection without using git
+  # Run the orchestration from a github shell script
   user_data = <<-EOF
               #!/bin/bash
-              # 1. Install and Start Docker Engine
-              dnf update -y
-              dnf install -y docker
-              systemctl enable --now docker
-              usermod -aG docker ec2-user
-
-              # 2. Setup the Docker Compose Plugin manually
-              mkdir -p /usr/libexec/docker/cli-plugins
-              curl -SL https://github.com/$(uname -m) -o /usr/libexec/docker/cli-plugins/docker-compose
-              chmod +x /usr/libexec/docker/cli-plugins/docker-compose
-
-              # 3. Create Project Structure
-              mkdir -p /home/ec2-user/prometheus-demo/app
-              mkdir -p /home/ec2-user/prometheus-demo/grafana-storage
-              chown -R 472:472 /home/ec2-user/prometheus-demo/grafana-storage
-
-              # 4. Write Python HTTP server application
-              cat << 'APP_EOF' > /home/ec2-user/prometheus-demo/app/main.py
-              import time
-              import random
-              from http.server import HTTPServer, BaseHTTPRequestHandler
-              from prometheus_client import generate_latest, CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, Summary
-
-              REQUEST_COUNT = Counter('demo_requests_total', 'Total number of HTTP requests received', ['method', 'endpoint'])
-              ACTIVE_USERS = Gauge('demo_active_users', 'Current active users on the platform')
-              REQUEST_LATENCY = Histogram('demo_request_latency_seconds', 'Time spent processing request')
-              PAYLOAD_SIZE = Summary('demo_payload_size_bytes', 'Size of processed payloads')
-
-              class MetricServer(BaseHTTPRequestHandler):
-                  def do_GET(self):
-                      if self.path == '/metrics':
-                          self.send_response(200)
-                          self.send_header('Content-Type', CONTENT_TYPE_LATEST)
-                          self.end_headers()
-                          self.wfile.write(generate_latest())
-                      else:
-                          REQUEST_COUNT.labels(method=self.command, endpoint=self.path).inc()
-                          ACTIVE_USERS.set(random.randint(10, 100))
-                          with REQUEST_LATENCY.time():
-                              time.sleep(random.uniform(0.01, 0.5))
-                          PAYLOAD_SIZE.observe(random.randint(100, 5000))
-                          self.send_response(200)
-                          self.send_header('Content-Type', 'text/html')
-                          self.end_headers()
-                          self.wfile.write(b"<h1>Demo App running...</h1>")
-
-              if __name__ == '__main__':
-                  server = HTTPServer(('0.0.0.0', 8000), MetricServer)
-                  print("Server started on port 8000")
-                  server.serve_forever()
-              APP_EOF
-
-              # 5. Write App Requirements configuration
-              cat << 'REQ_EOF' > /home/ec2-user/prometheus-demo/app/requirements.txt
-              prometheus_client==0.21.0
-              REQ_EOF
-
-              # 6. Write Prometheus Target scrapers
-              cat << 'PROM_EOF' > /home/ec2-user/prometheus-demo/prometheus.yml
-              global:
-                scrape_interval: 5s
-              scrape_configs:
-                - job_name: 'demo-http-app'
-                  static_configs:
-                    - targets: ['demo-app:8000']
-              PROM_EOF
-
-              # 7. Write Orchestration blueprint Compose profile
-              cat << 'COMPOSE_EOF' > /home/ec2-user/prometheus-demo/docker-compose.yml
-              version: '3.8'
-              services:
-                demo-app:
-                  image: python:3.11-slim
-                  container_name: demo-app
-                  volumes:
-                    - ./app:/app
-                  working_dir: /app
-                  command: sh -c "pip install -r requirements.txt && python main.py"
-                  ports:
-                    - "8000:8000"
-                prometheus:
-                  image: prom/prometheus:latest
-                  container_name: prometheus
-                  volumes:
-                    - ./prometheus.yml:/etc/prometheus/prometheus.yml
-                  ports:
-                    - "9090:9090"
-                grafana:
-                  image: grafana/grafana:latest
-                  container_name: grafana
-                  ports:
-                    - "3000:3000"
-                  volumes:
-                    - ./grafana-storage:/var/lib/grafana
-                  environment:
-                    - GF_SECURITY_ADMIN_PASSWORD=admin
-              COMPOSE_EOF
-
-              # 8. Spin up stack infrastructure containers
-              cd /home/ec2-user/prometheus-demo
-              docker compose up -d
+              curl -SL "https://raw.githubusercontent.com/scottkaplan/IK_monitoring_demo/main/scripts/setup-stack.sh" -o /tmp/setup-stack.sh
+              chmod +x /tmp/setup-stack.sh
+              /bin/bash /tmp/setup-stack.sh > /tmp/setup-execution.log 2>&1
               EOF
 
   tags = {
