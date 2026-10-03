@@ -40,6 +40,7 @@ curl -SL "${GITHUB_RAW}/dashboard.yml" -o $TARGET_DIR/dashboard.yml
 curl -SL "${GITHUB_RAW}/ik_dashboard.json" -o $TARGET_DIR/ik_dashboard.json
 curl -SL "${GITHUB_RAW}/docker-compose.yml" -o $TARGET_DIR/docker-compose.yml
 curl -SL "${GITHUB_RAW}/datasource.yml" -o $TARGET_DIR/datasource.yml
+curl -SL "${GITHUB_RAW}/generate_traffic.py" -o $TARGET_DIR/generate_traffic.py
 
 # 6. Jump into the workspace and run the stack
 cd $TARGET_DIR
