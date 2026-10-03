@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  demo-app:
+    image: python:3.11-slim
+    container_name: demo-app
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: sh -c "pip install -r requirements.txt && python main.py"
+    ports:
+      - "8000:8000"
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana-storage:/var/lib/grafana
+      - ./dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./ik_dashboard.json:/var/lib/grafana/dashboards/ik_dashboard.json
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: always
