@@ -172,7 +172,7 @@ resource "aws_route53_record" "dns_cname" {
   name    = "monitoring-demo.kaplans.com"
   type    = "A"
   ttl     = 30
-  records = [aws_eip.monitoring_eip.public_dns]
+  records = [aws_eip.monitoring_eip.public_ip]
 }
 
 # ==========================================
