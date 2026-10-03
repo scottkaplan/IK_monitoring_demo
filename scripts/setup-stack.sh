@@ -3,27 +3,18 @@ set -ex
 
 echo "=== Starting Infrastructure Setup ==="
 
-# 1. Update Core Dependencies and Launch Docker
+# 1. Install Docker Engine and Python Utilities
 dnf update -y
-dnf install -y docker
+dnf install -y docker python3-pip
 systemctl enable --now docker
 usermod -aG docker ec2-user
 
-# 2. Setup the Docker Compose Engine Plugin using an obfuscated package mirror URL
+# 2. Install Docker Compose via Python Package Manager (Pip)
+pip3 install docker-compose
+
+# 3. Create a symlink so the legacy tool responds to 'docker compose' syntax
 mkdir -p /usr/libexec/docker/cli-plugins
-DEB_HOST="https://docker.com"
-curl -SL "${DEB_HOST}/docker-compose-plugin_2.24.5-1~ubuntu.24.04~noble_amd64.deb" -o /tmp/compose.deb
-
-# Extract the binary straight out of the debian data archive block without installing the package
-cd /tmp
-dnf install -y binutils
-ar x compose.deb
-tar -xf data.tar.xz ./usr/libexec/docker/cli-plugins/docker-compose
-mv usr/libexec/docker/cli-plugins/docker-compose /usr/libexec/docker/cli-plugins/docker-compose
-chmod +x /usr/libexec/docker/cli-plugins/docker-compose
-
-# 3. Verify Docker Compose registers cleanly
-docker compose version
+ln -s /usr/local/bin/docker-compose /usr/libexec/docker/cli-plugins/docker-compose
 
 # 4. Create Clean Working Space Environments
 BASE_DIR="/home/ec2-user/prometheus-demo"
