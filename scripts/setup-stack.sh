@@ -31,7 +31,7 @@ mkdir -p /home/ec2-user/prometheus-demo/grafana-storage
 chown -R 472:472 /home/ec2-user/prometheus-demo/grafana-storage
 
 # 5. Fetch Your 5 Asset Configurations from GitHub
-GITHUB_RAW="https://raw.githubusercontent.com/main/scripts"
+GITHUB_RAW="https://raw.githubusercontent.com/scottkaplan/IK_monitoring_demo/main/scripts"
 
 curl -SL "${GITHUB_RAW}/main.py" -o /home/ec2-user/prometheus-demo/app/main.py
 curl -SL "${GITHUB_RAW}/requirements.txt" -o /home/ec2-user/prometheus-demo/app/requirements.txt
